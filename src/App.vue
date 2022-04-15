@@ -1,8 +1,4 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
   <router-view />
 </template>
 
@@ -13,8 +9,20 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  min-width: 100vw;
+  min-height: 100vh;
 }
-
+html {
+  min-width: 100vw;
+  min-height: 100vh;
+  --header-height: 48px;
+}
+body {
+  margin: 0px;
+  padding: 0px;
+  min-width: 100vw;
+  min-height: 100vh;
+}
 #nav {
   padding: 30px;
 }
@@ -26,5 +34,10 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.routerContain {
+  min-width: 100vh;
+  min-height: 100vh;
 }
 </style>

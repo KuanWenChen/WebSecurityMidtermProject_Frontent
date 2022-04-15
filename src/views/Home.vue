@@ -1,18 +1,38 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <Header />
+  <div class="page">
+    <div class="headerPadding" />
+    <div class="title">{{ this.title }}</div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
+import Header from "@/components/Header.vue";
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+    Header,
+  },
+  inheritAttrs: false,
+  data() {
+    return {
+      title: "網頁安全-留言板",
+    };
   },
 };
 </script>
+
+<style scoped>
+.page {
+  width: 100vw;
+  min-height: 100vh;
+}
+.title {
+  font-size: 36px;
+  font-weight: bold;
+}
+.headerPadding {
+  height: var(--header-height);
+}
+</style>
