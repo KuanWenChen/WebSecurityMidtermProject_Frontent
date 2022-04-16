@@ -10,6 +10,7 @@
       :account="'0123456789012'"
       :BBcode="testBBcode"
       @updateBBcode="updateBBcode"
+      @click="openComment(2)"
     />
   </div>
 
@@ -80,8 +81,8 @@ export default {
     sendComment() {
       console.log("send comment");
     },
-    openComment(floor) {
-      var newURL = "/comment/" + String(floor);
+    openComment(floorNumber) {
+      var newURL = "/comment/" + String(floorNumber);
       console.log("newURL: ", newURL);
       this.$router.push(newURL);
     },

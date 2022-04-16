@@ -18,7 +18,10 @@
           >
         </template>
         <template v-else-if="this.isEditMode()">
-          <el-upload style="padding-top: 10px; margin-right: 12px">
+          <el-upload
+            style="padding-top: 10px; margin-right: 12px"
+            @click="uploadFile"
+          >
             <el-button class="textButton" type="text"
               >附加檔案</el-button
             ></el-upload
@@ -30,7 +33,12 @@
             >取消</el-button
           >
         </template>
-        <label class="floorNumber">#{{ this.$props.floorNumber }}</label>
+        <el-button
+          class="textButton floorNumber"
+          type="text"
+          @click="openComment"
+          >#{{ this.$props.floorNumber }}</el-button
+        >
       </div>
     </div>
     <div
@@ -125,7 +133,14 @@ export default {
     isEditMode() {
       return this.editMode;
     },
-    enterEditMode() {
+    openComment(e) {
+      e.stopPropagation();
+      var newURL = "/comment/" + String(this.floorNumber);
+      console.log("newURL: ", newURL);
+      this.$router.push(newURL);
+    },
+    enterEditMode(e) {
+      e.stopPropagation();
       this.editMode = true;
       this.editBBcode = this.$props.BBcode;
     },
@@ -146,7 +161,6 @@ export default {
     },
     uploadFile(e) {
       e.stopPropagation();
-      console.log("upload file");
     },
   },
 };
