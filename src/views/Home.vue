@@ -3,7 +3,14 @@
   <div class="page">
     <div class="headerPadding" />
     <div class="title">{{ this.title }}</div>
-    <Comment :BBcode="testBBcode" @updateBBcode="updateBBcode" />
+    <Comment
+      class="comment"
+      :id="123"
+      :floorNumber="2"
+      :account="'0123456789012'"
+      :BBcode="testBBcode"
+      @updateBBcode="updateBBcode"
+    />
   </div>
 
   <el-button class="fixedButton" type="primary" circle @click="writeComment">
@@ -20,12 +27,15 @@
         v-model="test"
         style="width: 87%; height: 100%; font-size: 24px; resize: none"
       />
-      <el-button
-        style="width: 10%; height: 100%"
-        type="primary"
-        @click="sendComment"
-        >送出</el-button
-      >
+      <div class="buttonArea">
+        <el-button
+          style="width: 100%; height: 80%"
+          type="primary"
+          @click="sendComment"
+          >送出</el-button
+        >
+        <el-upload> <el-button type="text">附加檔案</el-button></el-upload>
+      </div>
     </div>
   </el-drawer>
 </template>
@@ -70,6 +80,11 @@ export default {
     sendComment() {
       console.log("send comment");
     },
+    openComment(floor) {
+      var newURL = "/comment/" + String(floor);
+      console.log("newURL: ", newURL);
+      this.$router.push(newURL);
+    },
   },
 };
 </script>
@@ -98,5 +113,16 @@ export default {
   align-items: center;
   justify-content: space-between;
   height: 100%;
+}
+.buttonArea {
+  width: 10%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.comment {
+  cursor: pointer;
 }
 </style>

@@ -19,7 +19,7 @@ const routes = [
   {
     path: "/Login",
     name: "Login",
-    component: () => import("../views/Login.vue"),
+    component: () => import("@/views/Login.vue"),
     beforeEnter: (to, from) => {
       return true;
     },
@@ -27,12 +27,12 @@ const routes = [
   {
     path: "/RegisterAccount",
     name: "RegisterAccount",
-    component: () => import("../views/RegisterAccount.vue"),
+    component: () => import("@/views/RegisterAccount.vue"),
   },
   {
     path: "/UserSetting",
     name: "UserSetting",
-    component: () => import("../views/UserSetting.vue"),
+    component: () => import("@/views/UserSetting.vue"),
     beforeEnter: (to, from) => {
       return true;
     },
@@ -40,10 +40,15 @@ const routes = [
   {
     path: "/Admin",
     name: "Admin",
-    component: () => import("../views/AdminPage.vue"),
+    component: () => import("@/views/AdminPage.vue"),
     beforeEnter: (to, from) => {
       return true;
     },
+  },
+  {
+    path: "/comment/:id",
+    name: "comment",
+    component: () => import("@/views/SingleComment.vue"),
   },
 ];
 

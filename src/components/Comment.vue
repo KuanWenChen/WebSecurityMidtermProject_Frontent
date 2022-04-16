@@ -18,6 +18,11 @@
           >
         </template>
         <template v-else-if="this.isEditMode()">
+          <el-upload style="padding-top: 10px; margin-right: 12px">
+            <el-button class="textButton" type="text"
+              >附加檔案</el-button
+            ></el-upload
+          >
           <el-button class="textButton" type="text" @click="confirmEdit"
             >確認</el-button
           >
@@ -59,14 +64,12 @@ export default {
     },
     account: {
       type: String,
-      default: "0123456789012",
     },
     timestamp: {
       type: Date(),
     },
     floorNumber: {
       type: Number,
-      default: 0,
     },
     BBcode: {
       type: String,
@@ -126,17 +129,24 @@ export default {
       this.editMode = true;
       this.editBBcode = this.$props.BBcode;
     },
-    deleteComment() {
+    deleteComment(e) {
+      e.stopPropagation();
       //####
       console.log("delete comment!");
     },
-    confirmEdit() {
+    confirmEdit(e) {
+      e.stopPropagation();
       this.$emit("updateBBcode", this.editBBcode);
       this.editMode = false;
     },
-    cancelEdit() {
+    cancelEdit(e) {
+      e.stopPropagation();
       this.editMode = false;
       this.editBBcode = this.$props.BBcode;
+    },
+    uploadFile(e) {
+      e.stopPropagation();
+      console.log("upload file");
     },
   },
 };
@@ -164,7 +174,7 @@ export default {
   align-items: center;
   flex-direction: row;
   justify-content: flex-end;
-  width: 120px;
+  width: 150px;
 }
 .textButton {
   margin: 0px;
@@ -189,6 +199,7 @@ export default {
   align-items: center;
   justify-content: flex-start;
   width: 200px;
+  height: 100%;
   margin-left: 10px;
 }
 .idtime {
@@ -219,7 +230,6 @@ export default {
   /* padding-top: 12px; */
   /* padding-left: 14px; */
   padding-bottom: var(--padding-UpDown);
-  height: 300px;
   margin-top: 4px;
   width: calc(var(--frame-width));
 }
