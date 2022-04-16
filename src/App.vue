@@ -2,6 +2,15 @@
   <router-view />
 </template>
 
+<script>
+export default {
+  setup() {},
+  created() {
+    document.title = "網頁安全";
+  },
+};
+</script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
