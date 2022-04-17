@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "docker": "npm run build && docker build -t web/vue-nginx:$npm_package_version ."
+    "docker": "docker build -t web/vue-nginx:$npm_package_version ."
   },
   "dependencies": {
     "core-js": "^3.6.5",

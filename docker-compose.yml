@@ -1,7 +1,7 @@
 version: "2"
 services:
   nginx:
-    image: websec/vue-nginx:0.0.1
+    image: web/vue-nginx:0.1.0
     restart: always
     ports:
-      - "80:80"
+      - "8080:8080"
