@@ -1,0 +1,12 @@
+version: 2
+services:
+  vue:
+    image: websecurity_frontend
+    container_name: websecurity_frontend
+    tty: true
+    volumes:
+      - "~/docker-vue:/app"
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
