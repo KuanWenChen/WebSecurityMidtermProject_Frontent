@@ -30,7 +30,7 @@
 </template>
 
 <script>
-const WEB_LOGO = require("@/assets/WebLogo.png");
+const WEB_LOGO = require("../assets/WebLogo.png");
 
 export default {
   setup() {},

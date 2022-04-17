@@ -4,18 +4,23 @@
       class="logo"
       fit="scale-down"
       :src="webLogo"
-      @click="goHomePage"
+      @click="redirect('/')"
     />
-    <div class="userInfo" v-if="true">
+    <div class="userInfo" v-if="this.isLogin()">
       <el-image class="icon" :src="icon" />
-      <el-link type="primary" class="toolText" href="./UserSetting"
+      <el-link type="primary" class="toolText" @click="redirect('/UserSetting')"
         >個人設定</el-link
       >
       <el-link type="primary" class="toolText" @click="logout">登出</el-link>
     </div>
     <div class="loginButtons" v-else>
-      <el-link class="offset" href="./Login" type="primary">登入</el-link>
-      <el-link class="offset" href="./RegisterAccount" type="primary"
+      <el-link class="offset" @click="redirect('/login')" type="primary"
+        >登入</el-link
+      >
+      <el-link
+        class="offset"
+        @click="redirect('/RegisterAccount')"
+        type="primary"
         >註冊帳號</el-link
       >
     </div>
@@ -34,11 +39,15 @@ export default {
     };
   },
   methods: {
-    goHomePage() {
-      this.$router.push("/");
+    redirect(url) {
+      this.$router.push(url);
     },
     logout() {
       console.log("logout");
+      this.redirect("/Login");
+    },
+    isLogin() {
+      return true;
     },
   },
 };

@@ -1,6 +1,9 @@
 const fs = require("fs");
 
 module.exports = {
+  publicPath: "./",
+  outputDir: "dist",
+  filenameHashing: true,
   devServer: {
     host: "localhost",
     port: 8000,
