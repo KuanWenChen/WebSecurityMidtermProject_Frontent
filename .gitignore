@@ -2,6 +2,7 @@
 node_modules
 /dist
 /dockerDist
+*.pem
 
 # local env files
 .env.local
