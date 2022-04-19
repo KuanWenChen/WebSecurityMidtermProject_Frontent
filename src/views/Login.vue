@@ -2,10 +2,15 @@
   <div class="page center">
     <el-image
       class="logo offset"
-      :src="webLogo"
+      src="https://demo.swordgunblue.works/api/WebLogo.png"
       @click="() => this.$router.push('/')"
     />
-    <el-form class="form offset" :model="loginData" :rules="loginRules">
+    <el-form
+      class="form offset"
+      ref="login_form"
+      :model="loginData"
+      :rules="loginRules"
+    >
       <el-form-item prop="account">
         <template #label><label class="formLabel">帳號</label></template>
         <el-input v-model="loginData.account" />
@@ -23,20 +28,26 @@
         >Login</el-button
       >
     </el-form>
-    <el-link class="offset" href="./RegisterAccount" type="primary"
+    <el-link class="offset" @click="redirect('/RegisterAccount')" type="primary"
       >註冊帳號</el-link
     >
   </div>
 </template>
 
 <script>
-const WEB_LOGO = require("../assets/WebLogo.png");
+import axios from "axios";
+import apiHelper from "@/util/apiHelper";
+import { ElMessage } from "element-plus";
+import Qs from "qs";
+import { useCookies } from "vue3-cookies";
 
 export default {
-  setup() {},
+  setup() {
+    const { cookies } = useCookies();
+    return { cookies };
+  },
   data() {
     return {
-      webLogo: WEB_LOGO,
       loginData: {
         account: undefined,
         password: undefined,
@@ -65,7 +76,38 @@ export default {
   },
   methods: {
     login() {
-      console.log("login");
+      // console.log("send login: ", this.loginData);
+      var form = this.$refs["login_form"];
+      form.validate((valid) => {
+        if (valid) {
+          axios
+            .post(
+              apiHelper.login.post$,
+              Qs.stringify({
+                username: this.loginData.account,
+                password: this.loginData.password,
+              })
+            )
+            .then((res) => {
+              var expireTime = new Date(Date.parse(res.data.cookie_time));
+              this.cookies.set("login", res.data.cookie, expireTime);
+              this.$store.commit("setUserData", {
+                userId: res.data.id,
+                userName: res.data.username,
+                userLevel: res.data.user_level,
+              });
+              this.redirect("/");
+            })
+            .catch((err) => {
+              this.cookies.remove("login");
+              console.log(err.response.data);
+              ElMessage.error(err.response.data);
+            });
+        }
+      });
+    },
+    redirect(url) {
+      this.$router.push(url);
     },
   },
 };

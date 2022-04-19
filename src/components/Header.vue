@@ -3,16 +3,32 @@
     <el-image
       class="logo"
       fit="scale-down"
-      :src="webLogo"
+      src="https://demo.swordgunblue.works/api/WebLogo.png"
       @click="redirect('/')"
     />
-    <div class="userInfo" v-if="this.isLogin()">
-      <el-image class="icon" :src="icon" />
+
+    <div
+      :style="this.getUserInfoStyle()"
+      class="userInfo"
+      v-if="this.isLogin()"
+    >
+      <el-image
+        class="icon"
+        src="https://demo.swordgunblue.works/api/default_icon.png"
+      />
       <el-link type="primary" class="toolText" @click="redirect('/UserSetting')"
         >個人設定</el-link
       >
-      <el-link type="primary" class="toolText" @click="logout">登出</el-link>
+      <el-link
+        type="primary"
+        class="toolText"
+        @click="redirect('/admin')"
+        v-if="this.isAdmin()"
+        >管理介面</el-link
+      >
+      <el-link type="primary" class="toolText" @click="logout()">登出</el-link>
     </div>
+
     <div class="loginButtons" v-else>
       <el-link class="offset" @click="redirect('/login')" type="primary"
         >登入</el-link
@@ -28,15 +44,28 @@
 </template>
 
 <script>
-const DEFAULT_ICON = require("@/assets/default_icon.png");
-const WEB_LOGO = require("@/assets/WebLogo.png");
+import { useCookies } from "vue3-cookies";
+import axios from "axios";
+import Qs from "qs";
+import apiHelper from "@/util/apiHelper";
+import { ElMessage } from "element-plus";
+
 export default {
-  setup() {},
+  setup() {
+    const { cookies } = useCookies();
+    return { cookies };
+  },
+  created() {
+    setTimeout(() => {
+      this.$store.commit("isLive");
+    }, 500);
+
+    // axios.get("https://demo.swordgunblue.works/api/").then((res) => {
+    //   console.log("hand shake:", res);
+    // });
+  },
   data() {
-    return {
-      webLogo: WEB_LOGO,
-      icon: DEFAULT_ICON,
-    };
+    return {};
   },
   methods: {
     redirect(url) {
@@ -44,10 +73,42 @@ export default {
     },
     logout() {
       console.log("logout");
-      this.redirect("/Login");
+      axios
+        .post(
+          apiHelper.logout.post$,
+          // Qs.stringify({
+          //   cookie: this.cookies.get("login"),
+          // }),
+          { withCredentials: true }
+        )
+        .then((res) => {
+          console.log("res: ", res);
+          this.cookies.remove("login");
+          this.redirect("/Login");
+        })
+        .catch((err) => {
+          // ElMessage.error(err.response.data);
+          console.log("err: ", err.response.data);
+          this.cookies.remove("login");
+          this.redirect("/Login");
+        });
     },
     isLogin() {
-      return true;
+      var loginCookie = this.cookies.get("login");
+      console.log("islogin cookie: ", loginCookie);
+      return (
+        loginCookie !== null && loginCookie !== undefined && loginCookie !== ""
+      );
+    },
+    isAdmin() {
+      return this.$store.getters.isAdmin();
+    },
+    getUserInfoStyle() {
+      if (this.isAdmin()) {
+        return "width: 260px";
+      } else {
+        return "width: 200px";
+      }
     },
   },
 };
@@ -76,7 +137,6 @@ export default {
   height: var(--radius);
 }
 .userInfo {
-  width: 200px;
   display: flex;
   flex-direction: row;
   align-items: center;

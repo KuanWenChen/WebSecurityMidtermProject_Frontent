@@ -4,8 +4,8 @@
       <div class="info">
         <el-image class="icon" :src="icon"></el-image>
         <div class="idtime">
-          <label class="timestamp">{{ this.timetamp2string() }}</label>
-          <label class="account">{{ this.$props.account }}</label>
+          <label class="timestamp">{{ this.timestamp2string() }}</label>
+          <label class="publisher">{{ this.$props.publisher }}</label>
         </div>
       </div>
       <div class="toolbar">
@@ -54,6 +54,7 @@
       :autosize="{ minRows: 5, maxRow: 10 }"
       autofocus
       @keydown.tab.prevent="typeTab"
+      @click="($e) => $e.stopPropagation()"
       v-else
     />
   </div>
@@ -63,27 +64,29 @@
 import bbCodeParser from "@/util/bbCodeParser_custom";
 import xss from "@/util/xss_custom.js";
 
+import axios from "axios";
+import apiHelper from "@/util/apiHelper";
+import { ElMessage } from "element-plus";
+import Qs from "qs";
+
 const DEFAULT_ICON = require("@/assets/default_icon.png");
 const PARSE_LIMIT_TIME = 6;
 export default {
   props: {
-    id: {
-      type: Number,
-    },
-    account: {
+    publisher: {
       type: String,
     },
-    timestamp: {
-      type: Date(),
+    publishTime: {
+      type: String,
     },
     floorNumber: {
-      type: Number,
+      type: String,
     },
     BBcode: {
       type: String,
     },
   },
-  emits: ["updateBBcode"],
+  emits: ["updateBBcode", "delete"],
   setup() {},
   data() {
     return {
@@ -93,7 +96,7 @@ export default {
     };
   },
   create() {
-    // console.log("Account: ", this.$props.Account);
+    // console.log("publisher: ", this.$props.publisher);
   },
   methods: {
     BBcode2HTML() {
@@ -124,18 +127,30 @@ export default {
       textArea.selectionStart = start;
       textArea.selectionEnd = start;
     },
-    timetamp2string() {
-      return "2022-04-16 18:50";
+    timestamp2string() {
+      // return "2022-04-16 18:50";
+      // publishTime: yyyy-mm-dd hh:mm:ss
+      if (
+        this.$props.publishTime !== undefined &&
+        this.$props.publishTime.length > 3
+      ) {
+        return this.$props.publishTime.substring(
+          0,
+          this.$props.publishTime.length - 3
+        );
+      } else {
+        return "UNKNOW";
+      }
     },
     isOwner() {
-      return true;
+      return this.$props.publisher === this.$store.getters.userName();
     },
     isEditMode() {
       return this.editMode;
     },
     openComment(e) {
       e.stopPropagation();
-      var newURL = "/comment/" + String(this.floorNumber);
+      var newURL = "/comment/" + String(this.$props.floorNumber);
       console.log("newURL: ", newURL);
       this.$router.push(newURL);
     },
@@ -146,12 +161,53 @@ export default {
     },
     deleteComment(e) {
       e.stopPropagation();
-      //####
-      console.log("delete comment!");
+      axios
+        .get(apiHelper.getToken.get, { withCredentials: true })
+        .then((res) => {
+          var deleteData = {
+            token: res.data.token,
+            id: this.$props.floorNumber,
+          };
+          console.log("deleteData: ", deleteData);
+          axios
+            .post(apiHelper.delete.post$, Qs.stringify(deleteData))
+            .then((res) => {
+              ElMessage.success(res.data);
+              console.log("delete: ", res.data);
+              this.$emit("delete");
+            })
+            .catch((err) => {
+              ElMessage.error(err.response.data);
+            });
+        })
+        .catch((err) => {
+          ElMessage.error(err.response.data);
+        });
     },
     confirmEdit(e) {
       e.stopPropagation();
-      this.$emit("updateBBcode", this.editBBcode);
+      axios
+        .get(apiHelper.getToken.get, { withCredentials: true })
+        .then((res) => {
+          var republishData = {
+            token: res.data.token,
+            id: this.$props.floorNumber,
+            content: this.editBBcode,
+          };
+          axios
+            .post(apiHelper.republish.post$, Qs.stringify(republishData))
+            .then((res) => {
+              ElMessage.success(res.data);
+              this.$emit("updateBBcode");
+            })
+            .catch((err) => {
+              ElMessage.error(err.response.data);
+            });
+        })
+        .catch((err) => {
+          ElMessage.error(err.response.data);
+        });
+
       this.editMode = false;
     },
     cancelEdit(e) {
@@ -227,7 +283,7 @@ export default {
   font-size: 12px;
   color: #909399;
 }
-.account {
+.publisher {
   font-size: 18px;
   font-weight: bold;
 }

@@ -4,12 +4,15 @@
     <div class="headerPadding" />
     <Comment
       style="margin-top: 10px"
-      :id="id"
-      :account="account"
+      :publisher="publisher"
       :floorNumber="floorNumber"
       :BBcode="BBcode"
-      @updateBBcode="updateBBcode"
+      :publishTime="publishTime"
+      @updateBBcode="this.fetchComment()"
+      @delete="this.fetchComment()"
+      v-if="this.getSucceed"
     />
+    <label v-else>Comment not exist</label>
   </div>
 </template>
 
@@ -17,7 +20,11 @@
 import { useRoute } from "vue-router";
 import Header from "@/components/Header.vue";
 import Comment from "@/components/Comment.vue";
-import { onMounted } from "@vue/runtime-core";
+
+import axios from "axios";
+import apiHelper from "@/util/apiHelper";
+import { ElMessage } from "element-plus";
+
 export default {
   components: {
     Header,
@@ -26,20 +33,35 @@ export default {
   setup() {
     const route = useRoute();
     return {
-      floorNumber: Number(route.params.id),
+      floorNumber: String(route.params.id),
     };
   },
   data() {
     return {
-      id: 123,
-      account: "testAccount",
-      BBcode:
-        "[img]https://www.google.com.tw/images/branding/googlelogo/2x/googlelogo_color_160x56dp.png[/img][color=#074edc][br][b][i][u]粗體[/b]斜體[/i]底線[/u]測試[br][color=red] cool color [/color][/color]",
+      getSucceed: false,
+      publisher: undefined,
+      BBcode: "",
+      publishTime: "123",
     };
   },
+  created() {
+    this.fetchComment();
+  },
   methods: {
-    updateBBcode(newBBcode) {
-      this.BBcode = newBBcode;
+    fetchComment() {
+      axios
+        .get(apiHelper.getComments.get$ + String(this.floorNumber))
+        .then((res) => {
+          console.log("getComments: ", res.data);
+          this.getSucceed = true;
+          this.publisher = res.data.publisher;
+          this.BBcode = res.data.content;
+          this.publishTime = res.data.publish_time;
+        })
+        .catch((err) => {
+          ElMessage.error(err.response.data);
+          this.getSucceed = false;
+        });
     },
   },
 };

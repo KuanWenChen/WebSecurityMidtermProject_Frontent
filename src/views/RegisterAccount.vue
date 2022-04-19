@@ -1,6 +1,6 @@
 <template>
   <div class="page center">
-    <el-form class="form" :model="loginData" :rules="loginRules">
+    <el-form class="form" ref="form" :model="loginData" :rules="loginRules">
       <el-form-item prop="account">
         <template #label><label class="formLabel">帳號</label></template>
         <el-input v-model="loginData.account" />
@@ -22,6 +22,11 @@
 </template>
 
 <script>
+import axios from "axios";
+import Qs from "qs";
+import apiHelper from "@/util/apiHelper";
+import { ElMessage } from "element-plus";
+
 export default {
   setup() {},
   data() {
@@ -53,8 +58,31 @@ export default {
     };
   },
   methods: {
+    redirect(url) {
+      this.$router.push(url);
+    },
     register() {
-      console.log("register");
+      var form = this.$refs["form"];
+      form.validate((valid) => {
+        if (valid) {
+          axios
+            .post(
+              apiHelper.register.post$,
+              Qs.stringify({
+                username: this.loginData.account,
+                password: this.loginData.password,
+              })
+            )
+            .then((res) => {
+              ElMessage.success("註冊成功");
+              this.redirect("/login");
+            })
+            .catch((err) => {
+              console.log(err.response.data);
+              ElMessage.error(err.response.data);
+            });
+        }
+      });
     },
   },
 };

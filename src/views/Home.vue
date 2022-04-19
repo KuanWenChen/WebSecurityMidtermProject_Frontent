@@ -3,15 +3,18 @@
   <div class="page">
     <div class="headerPadding" />
     <div class="title">{{ this.title }}</div>
-    <Comment
-      class="comment"
-      :id="123"
-      :floorNumber="2"
-      :account="'0123456789012'"
-      :BBcode="testBBcode"
-      @updateBBcode="updateBBcode"
-      @click="openComment(2)"
-    />
+    <template v-for="(comment, index) in this.commentList" :key="index">
+      <Comment
+        class="comment"
+        :floorNumber="comment.id"
+        :publishTime="comment.publish_time"
+        :publisher="comment.publisher"
+        :BBcode="comment.content"
+        @click="openComment(comment.id)"
+        @updateBBcode="fetchComment()"
+        @delete="fetchComment()"
+      />
+    </template>
   </div>
 
   <el-button class="fixedButton" type="primary" circle @click="writeComment">
@@ -25,8 +28,9 @@
   >
     <div class="writeCommentPannel">
       <textarea
-        v-model="test"
+        v-model="writeingContent"
         style="width: 87%; height: 100%; font-size: 24px; resize: none"
+        :maxlength="2000"
       />
       <div class="buttonArea">
         <el-button
@@ -46,6 +50,11 @@
 import Header from "@/components/Header.vue";
 import Comment from "@/components/Comment.vue";
 import { Edit } from "@element-plus/icons-vue";
+import axios from "axios";
+import Qs from "qs";
+import apiHelper from "@/util/apiHelper";
+import { ElMessage } from "element-plus";
+import { useCookies } from "vue3-cookies";
 
 export default {
   name: "Home",
@@ -55,36 +64,79 @@ export default {
     Edit,
   },
   inheritAttrs: false,
+  setup() {
+    const { cookies } = useCookies();
+    return { cookies };
+  },
   data() {
     return {
+      commentList: [],
       title: "網頁安全-留言板",
       isWriting: false,
-      html: "<script>alert(1)</" + "script>",
-      test: "13",
-      testBBcode:
-        "[img]https://www.google.com.tw/images/branding/googlelogo/2x/googlelogo_color_160x56dp.png[/img][color=#074edc][br][b][i][u]粗體[/b]斜體[/i]底線[/u]測試[br][color=red] cool color [/color][/color]",
+      writeingContent: "",
     };
   },
   created() {
+    this.fetchComment();
     // var str = "[img]jav ascript:alert('XSS');[/img] <div>123</div> [i]good[/i]";
     // var str = "[img]http://localhost:3000/login[/img] <div>123</div> [b][i]good[/b][/i]";
     // var str = '[img]"><script' + ">alert(1)<" + "/script>\\[/img]";
     // var str = "[size=24]文字[/size]	";
   },
   methods: {
-    updateBBcode(newBBcode) {
-      this.testBBcode = newBBcode;
+    updateBBcode(data) {
+      console.log("index: ", data.floorNumber, "\nnewBBcode: ", data.content);
     },
     writeComment() {
-      this.isWriting = true;
+      if (this.cookies.get("login")) {
+        this.isWriting = true;
+      } else {
+        ElMessage.error("請先登入");
+      }
     },
     sendComment() {
-      console.log("send comment");
+      this.isWriting = false;
+      axios
+        .get(apiHelper.getToken.get, { withCredentials: true })
+        .then((res) => {
+          var token = res.data.token;
+          axios
+            .post(
+              apiHelper.publish.post$,
+              Qs.stringify({
+                token: token,
+                content: this.writeingContent,
+              })
+            )
+            .then((res) => {
+              ElMessage.success(res.data);
+              this.fetchComment();
+              this.writeingContent = "";
+            })
+            .catch((err) => {
+              ElMessage.error(err.response.data);
+              this.isWriting = true;
+            });
+        })
+        .catch((err) => {
+          ElMessage.error(err.response.data);
+          this.isWriting = true;
+        });
     },
     openComment(floorNumber) {
       var newURL = "/comment/" + String(floorNumber);
       console.log("newURL: ", newURL);
       this.$router.push(newURL);
+    },
+    fetchComment() {
+      axios.get(apiHelper.getTitle.get).then((res) => {
+        console.log("res: ", res);
+        this.title = res.data.title;
+      });
+      axios.get(apiHelper.getComments.get).then((res) => {
+        console.log("getComments: ", res.data);
+        this.commentList = res.data;
+      });
     },
   },
 };
