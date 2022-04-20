@@ -10,6 +10,7 @@
         :publishTime="comment.publish_time"
         :publisher="comment.publisher"
         :BBcode="comment.content"
+        :file_name="comment.file_name"
         @click="openComment(comment.id)"
         @updateBBcode="fetchComment()"
         @delete="fetchComment()"
@@ -34,12 +35,11 @@
       />
       <div class="buttonArea">
         <el-button
-          style="width: 100%; height: 80%"
+          style="width: 100%; height: 100%"
           type="primary"
           @click="sendComment"
           >送出</el-button
         >
-        <el-upload> <el-button type="text">附加檔案</el-button></el-upload>
       </div>
     </div>
   </el-drawer>

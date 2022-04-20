@@ -4,6 +4,7 @@ const API_URL = backend + "/api";
 const api = {
   server: backend,
   handshake: API_URL,
+  user_images: API_URL + "/user_images/",
   getComments: {
     get: API_URL + "/getComments.php",
     get$: API_URL + "/getComments.php?id=",
@@ -47,6 +48,9 @@ const api = {
   getUserImage: {
     get: API_URL + "/getUserImage.php",
     get$: API_URL + "/getUserImage.php?username=",
+  },
+  uploadCommentFile: {
+    post$: API_URL + "/uploadCommentFile.php",
   },
 };
 

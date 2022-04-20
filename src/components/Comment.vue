@@ -19,8 +19,16 @@
         </template>
         <template v-else-if="this.isEditMode()">
           <el-upload
-            style="padding-top: 10px; margin-right: 12px"
+            style="margin-right: 12px"
+            ref="upload"
             @click="uploadFile"
+            :autoupload="false"
+            :data="uploadParam"
+            :action="uploadApi"
+            :before-upload="uploadFilePreset"
+            :show-file-list="false"
+            :on-success="uploadSuccess"
+            :on-error="errorHandler"
           >
             <el-button class="textButton" type="text"
               >附加檔案</el-button
@@ -40,6 +48,9 @@
           >#{{ this.$props.floorNumber }}</el-button
         >
       </div>
+    </div>
+    <div v-if="this.$props.file_name" class="fileLink" @click="openLink">
+      <el-button class="fileTextButton" type="text">附加檔案（打開）</el-button>
     </div>
     <div
       class="content"
@@ -84,6 +95,9 @@ export default {
     BBcode: {
       type: String,
     },
+    file_name: {
+      type: String,
+    },
   },
   emits: ["updateBBcode", "delete"],
   setup() {},
@@ -92,6 +106,9 @@ export default {
       icon_src: apiHelper.handshake + "/user_images/default_icon",
       editBBcode: "",
       editMode: false,
+      uploadApi: apiHelper.uploadCommentFile.post$,
+      uploadParam: undefined,
+      startUpload: undefined,
     };
   },
   create() {
@@ -194,6 +211,7 @@ export default {
     },
     confirmEdit(e) {
       e.stopPropagation();
+      const uploader = this.$refs["upload"];
       axios
         .get(apiHelper.getToken.get, { withCredentials: true })
         .then((res) => {
@@ -207,6 +225,7 @@ export default {
             .then((res) => {
               ElMessage.success(res.data);
               this.$emit("updateBBcode");
+              // this.uploader.submit();
             })
             .catch((err) => {
               ElMessage.error(err.response.data);
@@ -225,6 +244,43 @@ export default {
     },
     uploadFile(e) {
       e.stopPropagation();
+    },
+
+    uploadFilePreset(file) {
+      console.log("fd: ", file);
+      if (file.size > 5120) {
+        ElMessage.error("檔案過大，請小於5MB內");
+        return false;
+      }
+      return new Promise((reslove, reject) => {
+        axios
+          .get(apiHelper.getToken.get, { withCredentials: true })
+          .then((res) => {
+            this.uploadParam = {
+              token: res.data.token,
+              id: this.$props.floorNumber,
+            };
+            ElMessage.info("上傳中...");
+            reslove(true);
+          })
+          .catch((err) => {
+            ElMessage.error(err.response.data);
+            reject(false);
+          });
+      });
+    },
+
+    uploadSuccess(res) {
+      console.log("uploadSuccess: ", res);
+      ElMessage.success("上傳成功!");
+    },
+    errorHandler(err) {
+      console.log("upload err: ", err);
+      ElMessage.error(err.response.data);
+    },
+    openLink(e) {
+      e.stopPropagation();
+      window.open("/api/comment_files/" + this.$props.file_name, "_blank");
     },
   },
 };
@@ -319,5 +375,14 @@ export default {
 .frame:hover .content {
   background-color: rgb(214, 214, 214);
   border-radius: 0em 0em var(--hover-radius) var(--hover-radius);
+}
+.fileLink {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.fileTextButton {
+  font-size: 20px;
+  margin-left: 40px;
 }
 </style>

@@ -5,9 +5,10 @@
     <Comment
       style="margin-top: 10px"
       :publisher="publisher"
-      :floorNumber="floorNumber"
-      :BBcode="BBcode"
       :publishTime="publishTime"
+      :floorNumber="floorNumber"
+      :BBcode="content"
+      :file_name="file_name"
       @updateBBcode="this.fetchComment()"
       @delete="this.fetchComment()"
       v-if="this.getSucceed"
@@ -40,8 +41,9 @@ export default {
     return {
       getSucceed: false,
       publisher: undefined,
-      BBcode: "",
+      content: "",
       publishTime: "123",
+      file_name: undefined,
     };
   },
   created() {
@@ -55,8 +57,9 @@ export default {
           console.log("getComments: ", res.data);
           this.getSucceed = true;
           this.publisher = res.data.publisher;
-          this.BBcode = res.data.content;
           this.publishTime = res.data.publish_time;
+          this.content = res.data.content;
+          this.file_name = res.data.file_name;
         })
         .catch((err) => {
           ElMessage.error(err.response.data);
