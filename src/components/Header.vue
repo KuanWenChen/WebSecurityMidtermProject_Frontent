@@ -12,12 +12,12 @@
       class="userInfo"
       v-if="this.isLogin()"
     >
-      <el-image
-        class="icon"
-        src="https://demo.swordgunblue.works/api/default_icon.png"
-      />
-      <el-link type="primary" class="toolText" @click="redirect('/UserSetting')"
-        >個人設定</el-link
+      <el-image class="icon" :src="this.getUserIcon()" />
+      <el-link
+        type="primary"
+        class="toolText"
+        @click="redirect('/UserSetting')"
+        >{{ this.$store.getters.userName() }}</el-link
       >
       <el-link
         type="primary"
@@ -56,16 +56,16 @@ export default {
     return { cookies };
   },
   created() {
-    setTimeout(() => {
-      this.$store.commit("isLive");
-    }, 500);
+    this.$store.commit("isLive");
 
     // axios.get("https://demo.swordgunblue.works/api/").then((res) => {
     //   console.log("hand shake:", res);
     // });
   },
   data() {
-    return {};
+    return {
+      icon_src: apiHelper.handshake + "/user_images/default_icon",
+    };
   },
   methods: {
     redirect(url) {
@@ -84,7 +84,7 @@ export default {
         .then((res) => {
           console.log("res: ", res);
           this.cookies.remove("login");
-          this.redirect("/Login");
+          this.redirect("/login");
         })
         .catch((err) => {
           // ElMessage.error(err.response.data);
@@ -106,9 +106,22 @@ export default {
     getUserInfoStyle() {
       if (this.isAdmin()) {
         return "width: 260px";
+      } else if (
+        this.$store.getters.userName() !== undefined &&
+        this.$store.getters.userName().length > 8
+      ) {
+        return "width: 210px";
       } else {
         return "width: 200px";
       }
+    },
+    getUserIcon() {
+      axios
+        .get(apiHelper.getUserImage.get$ + this.$store.getters.userName())
+        .then((res) => {
+          this.icon_src = apiHelper.handshake + "/" + res.data;
+        });
+      return this.icon_src;
     },
   },
 };

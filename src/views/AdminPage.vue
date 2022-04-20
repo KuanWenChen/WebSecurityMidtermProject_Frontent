@@ -36,7 +36,7 @@ export default {
       if (this.$store.getters.isAdmin()) {
         return true;
       } else {
-        this.$router.push("/");
+        this.$router.replace("/");
         return false;
       }
     },

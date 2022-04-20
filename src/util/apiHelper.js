@@ -38,6 +38,16 @@ const api = {
   setTitle: {
     post$: API_URL + "/setTitle.php",
   },
+  uploadUserImage: {
+    post$: API_URL + "/uploadUserImage.php",
+  },
+  uploadUserImage_url: {
+    post$: API_URL + "/uploadUserImage_url.php",
+  },
+  getUserImage: {
+    get: API_URL + "/getUserImage.php",
+    get$: API_URL + "/getUserImage.php?username=",
+  },
 };
 
 Object.freeze(api);

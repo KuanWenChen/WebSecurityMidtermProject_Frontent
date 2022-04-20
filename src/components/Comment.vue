@@ -2,7 +2,7 @@
   <div class="frame">
     <div class="title">
       <div class="info">
-        <el-image class="icon" :src="icon"></el-image>
+        <el-image class="icon" :src="this.getUserIcon()"></el-image>
         <div class="idtime">
           <label class="timestamp">{{ this.timestamp2string() }}</label>
           <label class="publisher">{{ this.$props.publisher }}</label>
@@ -69,7 +69,6 @@ import apiHelper from "@/util/apiHelper";
 import { ElMessage } from "element-plus";
 import Qs from "qs";
 
-const DEFAULT_ICON = require("@/assets/default_icon.png");
 const PARSE_LIMIT_TIME = 6;
 export default {
   props: {
@@ -90,7 +89,7 @@ export default {
   setup() {},
   data() {
     return {
-      icon: DEFAULT_ICON,
+      icon_src: apiHelper.handshake + "/user_images/default_icon",
       editBBcode: "",
       editMode: false,
     };
@@ -99,6 +98,15 @@ export default {
     // console.log("publisher: ", this.$props.publisher);
   },
   methods: {
+    getUserIcon() {
+      axios
+        .get(apiHelper.getUserImage.get$ + this.$props.publisher)
+        .then((res) => {
+          this.icon_src = apiHelper.handshake + "/" + res.data;
+          console.log("this.icon_src: ", this.icon_src);
+        });
+      return this.icon_src;
+    },
     BBcode2HTML() {
       var count = 1;
       var lastHTML = this.$props.BBcode;
