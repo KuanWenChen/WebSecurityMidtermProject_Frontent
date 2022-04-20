@@ -78,7 +78,7 @@ export default {
               this.redirect("/login");
             })
             .catch((err) => {
-              console.log(err.response.data);
+              // console.log(err.response.data);
               ElMessage.error(err.response.data);
             });
         }

@@ -54,7 +54,7 @@ export default {
       axios
         .get(apiHelper.getComments.get$ + String(this.floorNumber))
         .then((res) => {
-          console.log("getComments: ", res.data);
+          // console.log("getComments: ", res.data);
           this.getSucceed = true;
           this.publisher = res.data.publisher;
           this.publishTime = res.data.publish_time;

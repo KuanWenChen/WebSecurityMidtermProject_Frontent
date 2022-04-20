@@ -78,12 +78,12 @@ export default {
           axios
             .post(apiHelper.uploadUserImage_url.post$, Qs.stringify(data))
             .then((res) => {
-              console.log("res: ", res);
+              // console.log("res: ", res);
               ElMessage.success(res.data);
               this.$router.go(0);
             })
             .catch((err) => {
-              console.log("err: ", err.response.data);
+              // console.log("err: ", err.response.data);
               ElMessage.error(err.response.data);
             });
         })
@@ -92,7 +92,7 @@ export default {
         });
     },
     uploadFilePreset(file) {
-      console.log("fd: ", file);
+      // console.log("fd: ", file);
       if (file.size > 5120) {
         ElMessage.error("檔案過大，請小於5MB內");
         return false;
@@ -127,11 +127,11 @@ export default {
       }
     },
     errorHandler(err) {
-      console.log("upload err: ", err);
+      // console.log("upload err: ", err);
       ElMessage.error(err.response.data);
     },
     uploadSuccess(res) {
-      console.log("uploadSuccess: ", res);
+      // console.log("uploadSuccess: ", res);
       ElMessage.success("上傳成功!");
       this.$router.go(0);
     },

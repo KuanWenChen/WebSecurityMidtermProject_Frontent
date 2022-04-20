@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import axios from "axios";
 import apiHelper from "@/util/apiHelper";
 import { useCookies } from "vue3-cookies";
+import { ElMessage } from "element-plus";
 
 export default createStore({
   state: {
@@ -29,11 +30,11 @@ export default createStore({
   },
   mutations: {
     setUserData(state, userInfo) {
-      console.log("set user data: ", userInfo);
+      // console.log("set user data: ", userInfo);
       state.userId = userInfo.id;
       state.userName = userInfo.username;
       state.userLevel = userInfo.user_level;
-      console.log("update account info");
+      // console.log("update account info");
     },
     isLive(state) {
       const { cookies } = useCookies();
@@ -45,13 +46,14 @@ export default createStore({
           { withCredentials: true }
         )
         .then((res) => {
-          console.log("isLive res: ", res);
+          // console.log("isLive res: ", res);
           state.userId = res.data.id;
           state.userName = res.data.username;
           state.userLevel = res.data.user_level;
         })
         .catch((err) => {
-          console.log("isLive err: ", err.response);
+          // console.log("isLive err: ", err.response);
+          // ElMessage.error(err.response.data);
           cookies.remove("login");
           state.userId = undefined;
           state.userName = undefined;

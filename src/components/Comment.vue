@@ -103,7 +103,7 @@ export default {
   setup() {},
   data() {
     return {
-      icon_src: apiHelper.handshake + "/user_images/default_icon",
+      icon_src: apiHelper.user_images + "default_icon",
       editBBcode: "",
       editMode: false,
       uploadApi: apiHelper.uploadCommentFile.post$,
@@ -120,7 +120,7 @@ export default {
         .get(apiHelper.getUserImage.get$ + this.$props.publisher)
         .then((res) => {
           this.icon_src = apiHelper.handshake + "/" + res.data;
-          console.log("this.icon_src: ", this.icon_src);
+          // console.log("this.icon_src: ", this.icon_src);
         });
       return this.icon_src;
     },
@@ -176,7 +176,7 @@ export default {
     openComment(e) {
       e.stopPropagation();
       var newURL = "/comment/" + String(this.$props.floorNumber);
-      console.log("newURL: ", newURL);
+      // console.log("newURL: ", newURL);
       this.$router.push(newURL);
     },
     enterEditMode(e) {
@@ -193,12 +193,12 @@ export default {
             token: res.data.token,
             id: this.$props.floorNumber,
           };
-          console.log("deleteData: ", deleteData);
+          // console.log("deleteData: ", deleteData);
           axios
             .post(apiHelper.delete.post$, Qs.stringify(deleteData))
             .then((res) => {
               ElMessage.success(res.data);
-              console.log("delete: ", res.data);
+              // console.log("delete: ", res.data);
               this.$emit("delete");
             })
             .catch((err) => {
@@ -247,7 +247,7 @@ export default {
     },
 
     uploadFilePreset(file) {
-      console.log("fd: ", file);
+      // console.log("fd: ", file);
       if (file.size > 5120) {
         ElMessage.error("檔案過大，請小於5MB內");
         return false;
@@ -271,16 +271,16 @@ export default {
     },
 
     uploadSuccess(res) {
-      console.log("uploadSuccess: ", res);
+      // console.log("uploadSuccess: ", res);
       ElMessage.success("上傳成功!");
     },
     errorHandler(err) {
-      console.log("upload err: ", err);
+      // console.log("upload err: ", err);
       ElMessage.error(err.response.data);
     },
     openLink(e) {
       e.stopPropagation();
-      window.open("/api/comment_files/" + this.$props.file_name, "_blank");
+      window.open(apiHelper.comment_files + this.$props.file_name, "_blank");
     },
   },
 };
@@ -290,7 +290,7 @@ export default {
 .frame {
   --hover-radius: 0.3em;
   --padding-UpDown: 8px;
-  --frame-width: 98vw;
+  --frame-width: 97vw;
   display: inline-block;
   width: var(--frame-width);
   background-color: white;

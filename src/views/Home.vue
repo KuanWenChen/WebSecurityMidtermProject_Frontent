@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     updateBBcode(data) {
-      console.log("index: ", data.floorNumber, "\nnewBBcode: ", data.content);
+      // console.log("index: ", data.floorNumber, "\nnewBBcode: ", data.content);
     },
     writeComment() {
       if (this.cookies.get("login")) {
@@ -125,16 +125,16 @@ export default {
     },
     openComment(floorNumber) {
       var newURL = "/comment/" + String(floorNumber);
-      console.log("newURL: ", newURL);
+      // console.log("newURL: ", newURL);
       this.$router.push(newURL);
     },
     fetchComment() {
       axios.get(apiHelper.getTitle.get).then((res) => {
-        console.log("res: ", res);
+        // console.log("res: ", res);
         this.title = res.data.title;
       });
       axios.get(apiHelper.getComments.get).then((res) => {
-        console.log("getComments: ", res.data);
+        // console.log("getComments: ", res.data);
         this.commentList = res.data;
       });
     },

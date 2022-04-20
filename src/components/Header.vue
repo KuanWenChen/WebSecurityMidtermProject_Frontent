@@ -64,7 +64,7 @@ export default {
   },
   data() {
     return {
-      icon_src: apiHelper.handshake + "/user_images/default_icon",
+      icon_src: apiHelper.user_images + "default_icon",
     };
   },
   methods: {
@@ -72,7 +72,7 @@ export default {
       this.$router.push(url);
     },
     logout() {
-      console.log("logout");
+      // console.log("logout");
       axios
         .post(
           apiHelper.logout.post$,
@@ -82,20 +82,20 @@ export default {
           { withCredentials: true }
         )
         .then((res) => {
-          console.log("res: ", res);
+          // console.log("res: ", res);
           this.cookies.remove("login");
           this.redirect("/login");
         })
         .catch((err) => {
           // ElMessage.error(err.response.data);
-          console.log("err: ", err.response.data);
+          // console.log("err: ", err.response.data);
           this.cookies.remove("login");
           this.redirect("/Login");
         });
     },
     isLogin() {
       var loginCookie = this.cookies.get("login");
-      console.log("islogin cookie: ", loginCookie);
+      // console.log("islogin cookie: ", loginCookie);
       return (
         loginCookie !== null && loginCookie !== undefined && loginCookie !== ""
       );

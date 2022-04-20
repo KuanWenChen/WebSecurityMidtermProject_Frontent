@@ -100,7 +100,7 @@ export default {
             })
             .catch((err) => {
               this.cookies.remove("login");
-              console.log(err.response.data);
+              // console.log(err.response.data);
               ElMessage.error(err.response.data);
             });
         }
