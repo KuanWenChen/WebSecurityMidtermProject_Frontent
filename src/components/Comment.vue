@@ -49,8 +49,8 @@
         >
       </div>
     </div>
-    <div v-if="this.$props.file_name" class="fileLink" @click="openLink">
-      <el-button class="fileTextButton" type="text">附加檔案（打開）</el-button>
+    <div v-if="this.$props.file_name" class="fileLink" @click="downLoadFile">
+      <el-button class="fileTextButton" type="text">附加檔案（下載）</el-button>
     </div>
     <div
       class="content"
@@ -278,9 +278,24 @@ export default {
       // console.log("upload err: ", err);
       ElMessage.error(err.response.data);
     },
+    getFileURL() {
+      return apiHelper.comment_files + this.$props.file_name;
+    },
+    downLoadFile(e) {
+      e.stopPropagation();
+      axios.get(this.getFileURL()).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", this.$props.file_name);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    },
     openLink(e) {
       e.stopPropagation();
-      window.open(apiHelper.comment_files + this.$props.file_name, "_blank");
+      window.open(this.getFileURL(), "_blank");
     },
   },
 };
