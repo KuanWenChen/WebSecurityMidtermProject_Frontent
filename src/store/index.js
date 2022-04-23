@@ -21,7 +21,7 @@ export default createStore({
       return state.userLevel;
     },
     isAdmin: (state) => () => {
-      if (String(state.userLevel) === "0") {
+      if (String(state.userLevel) === "763254") {
         return true;
       } else {
         return false;
